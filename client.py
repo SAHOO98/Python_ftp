@@ -1,6 +1,7 @@
 import socket as s
 import time
-
+import os
+import struct
 
 class Client():
     def __init__(self, address, file_name, buffsize = 4096):
@@ -15,18 +16,24 @@ class Client():
         self.buffsize = buffsize
 
     def send(self):
-        size = 0
+        print(self.file_name)
+        size = os.stat(self.file_name).st_size
+        print(f"Size of the file to be sent(bytes) = {size}")
+        size_counter = 0
+        bin_size = struct.pack("!Q", size)
         with open(self.file_name, 'rb') as f:
-            raw_data = f.read(self.buffsize)
+            raw_data = bin_size
 
             while raw_data:
-                size+=len(raw_data)
                 self.sok_conn.send(raw_data)
+                size_counter += len(raw_data)
+                print(f'\r Percentage of file sent : {size_counter/(size+8)*100 :.2f}%', end = '\r')
+                
                 raw_data = f.read(self.buffsize)
 
         self.sok_conn.close()
         f.close()  
-        return f'Upload done in {time.time()-self.timer} secs.\nData uploaded of size {size} bytes.\n'
+        return f'\n\nUpload done in {time.time()-self.timer} secs.\n'
         
 if __name__ == "__main__":
     # client()
