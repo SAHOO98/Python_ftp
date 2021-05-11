@@ -1,7 +1,7 @@
 import socket as s
 import time
 import struct
-# import os
+# import os 
 def get_ip():
     sock = s.socket(s.AF_INET, s.SOCK_DGRAM)
     try:
@@ -34,7 +34,7 @@ class Server:
     f = open(self.file_name, 'wb')
 
     raw_size = client_socket.recv(self.buffsize)
-    
+    print(f'First 8 bytes recieved : {raw_size}')
     size = struct.unpack("!Q", raw_size)[0]
     size_counter = 0
     raw_data  = client_socket.recv(self.buffsize)
@@ -53,6 +53,7 @@ class Server:
       clientSocket, addr = self.sock_conn.accept()
       response = self.process_client(clientSocket, addr)
       print(response)
+      
     except KeyboardInterrupt :
       print('\nServer ended manually!\n')
       self.sock_conn.close()
