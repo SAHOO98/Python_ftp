@@ -1,6 +1,7 @@
 import socket as s
 import time
-
+import struct
+import os
 def get_ip():
     sock = s.socket(s.AF_INET, s.SOCK_DGRAM)
     try:
@@ -31,14 +32,21 @@ class Server:
     self.timer = time.time()
     print(f'Connection recieved from {addr}...')
     f = open(self.file_name, 'wb')
-    raw_data = client_socket.recv(self.buffsize)
-    size = 0
+
+    raw_size = client_socket.recv(self.buffsize)
+    size = struct.unpack("!Q", raw_size)[0]
+    size_counter = 0
+    raw_data  = client_socket.recv(self.buffsize)
+    
     while raw_data:
-      size+=len(raw_data)
+      size_counter+=len(raw_data)
+      print(f"Percentage of file recieved : {size_counter/size*100}")
+      print(f"Size of the file to be recieved : {size}")
+      os.system('clear')
       f.write(raw_data)
       raw_data = client_socket.recv(self.buffsize)
     f.close()
-    return f'Message Recived and stored in {self.file_name}\n'+f'Download done in {time.time() - self.timer} secs.\n'+f'Size of incoming file:{size} Bytes.\n'
+    return f'Message Recived and stored in {self.file_name}\n'+f'Download done in {time.time() - self.timer} secs.\n'
 
   def listen(self):
     self.sock_conn.listen(5)
