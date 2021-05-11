@@ -18,13 +18,17 @@ class Client():
     def send(self):
         print(self.file_name)
         size = os.stat(self.file_name).st_size
-        print(f"Size of the file to be sent = {size}")
+        print(f"Size of the file to be sent(bytes) = {size}")
+        size_counter = 0
         bin_size = struct.pack("!Q", size)
         with open(self.file_name, 'rb') as f:
             raw_data = bin_size
 
             while raw_data:
                 self.sok_conn.send(raw_data)
+                size_counter += len(raw_data)
+                print(f'\r Percentage of file sent : {size_counter/(size+8)*100 :.2f}%', end = '\r')
+                
                 raw_data = f.read(self.buffsize)
 
         self.sok_conn.close()
