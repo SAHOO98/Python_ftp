@@ -33,7 +33,7 @@ class Client():
 
         self.sok_conn.close()
         f.close()  
-        return f'Upload done in {time.time()-self.timer} secs.\n'
+        return f'\nUpload done in {time.time()-self.timer} secs.\n'
         
 if __name__ == "__main__":
     # client()
